@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   Typography,
-  Grid,
   Select,
   MenuItem,
   FormControl,
@@ -129,8 +128,8 @@ export default function LiveScores() {
       </Box>
 
       {/* Statistics Cards */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={4}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+        <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', md: 'calc(33.333% - 16px)' } }}>
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom variant="body2">
@@ -141,8 +140,8 @@ export default function LiveScores() {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        </Box>
+        <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', md: 'calc(33.333% - 16px)' } }}>
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom variant="body2">
@@ -153,8 +152,8 @@ export default function LiveScores() {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        </Box>
+        <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', md: 'calc(33.333% - 16px)' } }}>
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom variant="body2">
@@ -165,8 +164,8 @@ export default function LiveScores() {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
 
       {/* Filters Section */}
       <Card sx={{ mb: 3 }}>
@@ -174,8 +173,8 @@ export default function LiveScores() {
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
             FILTERS
           </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={3}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ width: { xs: '100%', md: 'calc(25% - 12px)' } }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Sport</InputLabel>
                 <Select
@@ -193,8 +192,8 @@ export default function LiveScores() {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12} md={3}>
+            </Box>
+            <Box sx={{ width: { xs: '100%', md: 'calc(25% - 12px)' } }}>
               <FormControl fullWidth size="small">
                 <InputLabel>League</InputLabel>
                 <Select
@@ -210,8 +209,8 @@ export default function LiveScores() {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12} md={3}>
+            </Box>
+            <Box sx={{ width: { xs: '100%', md: 'calc(25% - 12px)' } }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Status</InputLabel>
                 <Select
@@ -225,8 +224,8 @@ export default function LiveScores() {
                   <MenuItem value="NS">Upcoming</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12} md={3}>
+            </Box>
+            <Box sx={{ width: { xs: '100%', md: 'calc(25% - 12px)' } }}>
               <TextField
                 fullWidth
                 size="small"
@@ -235,8 +234,8 @@ export default function LiveScores() {
                 value={teamFilter}
                 onChange={(e) => setTeamFilter(e.target.value)}
               />
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </CardContent>
       </Card>
 
@@ -276,9 +275,9 @@ export default function LiveScores() {
           </Paper>
         )}
 
-        <Grid container spacing={2}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
           {matches.map((match: any) => (
-            <Grid item xs={12} sm={6} md={4} key={match.id}>
+            <Box key={match.id} sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', md: 'calc(33.333% - 16px)' } }}>
               <Card
                 sx={{
                   height: '100%',
@@ -355,9 +354,9 @@ export default function LiveScores() {
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       </Box>
     </Box>
   )

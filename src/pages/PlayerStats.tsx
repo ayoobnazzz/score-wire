@@ -19,7 +19,6 @@ import {
   Paper,
   CircularProgress,
   Alert,
-  Grid,
 } from '@mui/material'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import PeopleIcon from '@mui/icons-material/People'
@@ -69,7 +68,6 @@ export default function PlayerStats() {
 
   const totalGoals = players.reduce((sum: number, p: any) => sum + (p.goals || 0), 0)
   const totalAssists = players.reduce((sum: number, p: any) => sum + (p.assists || 0), 0)
-  const totalAppearances = players.reduce((sum: number, p: any) => sum + (p.appearances || 0), 0)
 
   return (
     <Box>
@@ -96,8 +94,8 @@ export default function PlayerStats() {
       </Box>
 
       {/* Statistics Cards */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={4}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+        <Box sx={{ width: { xs: '100%', sm: 'calc(33.333% - 16px)' } }}>
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom variant="body2">
@@ -108,8 +106,8 @@ export default function PlayerStats() {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-        <Grid item xs={12} sm={4}>
+        </Box>
+        <Box sx={{ width: { xs: '100%', sm: 'calc(33.333% - 16px)' } }}>
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom variant="body2">
@@ -120,8 +118,8 @@ export default function PlayerStats() {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-        <Grid item xs={12} sm={4}>
+        </Box>
+        <Box sx={{ width: { xs: '100%', sm: 'calc(33.333% - 16px)' } }}>
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom variant="body2">
@@ -132,8 +130,8 @@ export default function PlayerStats() {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
 
       {/* Filters Section */}
       <Card sx={{ mb: 3 }}>
@@ -141,8 +139,8 @@ export default function PlayerStats() {
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
             FILTERS
           </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ width: { xs: '100%', md: 'calc(33.333% - 16px)' } }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Sport</InputLabel>
                 <Select
@@ -160,8 +158,8 @@ export default function PlayerStats() {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12} md={4}>
+            </Box>
+            <Box sx={{ width: { xs: '100%', md: 'calc(33.333% - 16px)' } }}>
               <TextField
                 fullWidth
                 size="small"
@@ -170,8 +168,8 @@ export default function PlayerStats() {
                 value={teamFilter}
                 onChange={(e) => setTeamFilter(e.target.value)}
               />
-            </Grid>
-            <Grid item xs={12} md={4}>
+            </Box>
+            <Box sx={{ width: { xs: '100%', md: 'calc(33.333% - 16px)' } }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Sort By</InputLabel>
                 <Select
@@ -184,8 +182,8 @@ export default function PlayerStats() {
                   <MenuItem value="appearances">Appearances</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </CardContent>
       </Card>
 

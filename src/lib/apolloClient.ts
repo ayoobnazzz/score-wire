@@ -24,10 +24,8 @@ const wsLink = new GraphQLWsLink(
     connectionParams: () => ({}),
     shouldRetry: () => true,
     retryAttempts: 5,
-    retryWait: async function* retryWait() {
-      for (let i = 0; i < 5; i++) {
-        yield new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-      }
+    retryWait: async (retries: number) => {
+      await new Promise(resolve => setTimeout(resolve, 1000 * (retries + 1)));
     },
   })
 );

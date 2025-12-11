@@ -18,7 +18,6 @@ import {
   Paper,
   CircularProgress,
   Alert,
-  Grid,
 } from '@mui/material'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TableChartIcon from '@mui/icons-material/TableChart'
@@ -124,8 +123,8 @@ export default function LeagueStandings() {
 
       {/* Statistics Cards */}
       {topTeam && (
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={12} sm={4}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+          <Box sx={{ width: { xs: '100%', sm: 'calc(33.333% - 16px)' } }}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom variant="body2">
@@ -136,8 +135,8 @@ export default function LeagueStandings() {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
-          <Grid item xs={12} sm={4}>
+          </Box>
+          <Box sx={{ width: { xs: '100%', sm: 'calc(33.333% - 16px)' } }}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom variant="body2">
@@ -148,8 +147,8 @@ export default function LeagueStandings() {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
-          <Grid item xs={12} sm={4}>
+          </Box>
+          <Box sx={{ width: { xs: '100%', sm: 'calc(33.333% - 16px)' } }}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom variant="body2">
@@ -160,8 +159,8 @@ export default function LeagueStandings() {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       )}
 
       {/* Filters Section */}
@@ -170,8 +169,8 @@ export default function LeagueStandings() {
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
             FILTERS
           </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ width: { xs: '100%', md: 'calc(50% - 8px)' } }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Sport</InputLabel>
                 <Select
@@ -186,8 +185,8 @@ export default function LeagueStandings() {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12} md={4}>
+            </Box>
+            <Box sx={{ width: { xs: '100%', md: 'calc(50% - 8px)' } }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Select League</InputLabel>
                 <Select
@@ -202,8 +201,8 @@ export default function LeagueStandings() {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </CardContent>
       </Card>
 
