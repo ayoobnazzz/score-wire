@@ -20,8 +20,8 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer'
 
 const GET_MATCHES = gql`
-  query GetMatches($league: String, $team: String, $status: String) {
-    matches(league: $league, team: $team, status: $status) {
+  query GetMatches($league: String, $team: String, $status: String, $sport: String) {
+    matches(league: $league, team: $team, status: $status, sport: $sport) {
       id
       homeTeam
       awayTeam
@@ -36,16 +36,27 @@ const GET_MATCHES = gql`
 `
 
 const GET_LEAGUES = gql`
-  query GetLeagues {
-    leagues {
+  query GetLeagues($sport: String) {
+    leagues(sport: $sport) {
       id
       name
       country
+      sport
+    }
+  }
+`
+
+const GET_SPORTS = gql`
+  query GetSports {
+    sports {
+      name
+      displayName
     }
   }
 `
 
 export default function LiveScores() {
+  const [selectedSport, setSelectedSport] = useState<string>('Soccer')
   const [selectedLeague, setSelectedLeague] = useState<string>('')
   const [teamFilter, setTeamFilter] = useState<string>('')
   const [statusFilter, setStatusFilter] = useState<string>('')
@@ -55,11 +66,16 @@ export default function LiveScores() {
       league: selectedLeague || undefined,
       team: teamFilter || undefined,
       status: statusFilter || undefined,
+      sport: selectedSport,
     },
     pollInterval: 30000,
   })
 
-  const { data: leaguesData } = useQuery(GET_LEAGUES)
+  const { data: leaguesData } = useQuery(GET_LEAGUES, {
+    variables: { sport: selectedSport },
+  })
+
+  const { data: sportsData } = useQuery(GET_SPORTS)
 
   const matches = matchesData?.matches || []
 
@@ -159,7 +175,26 @@ export default function LiveScores() {
             FILTERS
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={3}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Sport</InputLabel>
+                <Select
+                  value={selectedSport}
+                  label="Sport"
+                  onChange={(e) => {
+                    setSelectedSport(e.target.value)
+                    setSelectedLeague('') // Reset league when sport changes
+                  }}
+                >
+                  {sportsData?.sports.map((sport: any) => (
+                    <MenuItem key={sport.name} value={sport.name}>
+                      {sport.displayName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>League</InputLabel>
                 <Select
@@ -176,7 +211,7 @@ export default function LiveScores() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={3}>
               <FormControl fullWidth size="small">
                 <InputLabel>Status</InputLabel>
                 <Select
@@ -191,7 +226,7 @@ export default function LiveScores() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={3}>
               <TextField
                 fullWidth
                 size="small"

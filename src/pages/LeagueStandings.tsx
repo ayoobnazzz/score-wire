@@ -24,11 +24,12 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TableChartIcon from '@mui/icons-material/TableChart'
 
 const GET_LEAGUES = gql`
-  query GetLeagues {
-    leagues {
+  query GetLeagues($sport: String) {
+    leagues(sport: $sport) {
       id
       name
       country
+      sport
     }
   }
 `
@@ -51,9 +52,22 @@ const GET_STANDINGS = gql`
   }
 `
 
+const GET_SPORTS = gql`
+  query GetSports {
+    sports {
+      name
+      displayName
+    }
+  }
+`
+
 export default function LeagueStandings() {
-  const { data: leaguesData } = useQuery(GET_LEAGUES)
+  const [selectedSport, setSelectedSport] = useState<string>('Soccer')
+  const { data: leaguesData } = useQuery(GET_LEAGUES, {
+    variables: { sport: selectedSport },
+  })
   const [selectedLeague, setSelectedLeague] = useState<string>('')
+  const { data: sportsData } = useQuery(GET_SPORTS)
 
   // Set default league when leagues data loads
   useEffect(() => {
@@ -61,6 +75,11 @@ export default function LeagueStandings() {
       setSelectedLeague(leaguesData.leagues[0].id)
     }
   }, [leaguesData, selectedLeague])
+
+  // Reset league when sport changes
+  useEffect(() => {
+    setSelectedLeague('')
+  }, [selectedSport])
 
   const { data: standingsData, loading, error } = useQuery(GET_STANDINGS, {
     variables: { leagueId: selectedLeague },
@@ -151,20 +170,40 @@ export default function LeagueStandings() {
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
             FILTERS
           </Typography>
-          <FormControl fullWidth size="small" sx={{ maxWidth: 400 }}>
-            <InputLabel>Select League</InputLabel>
-            <Select
-              value={selectedLeague}
-              label="Select League"
-              onChange={(e) => setSelectedLeague(e.target.value)}
-            >
-              {leaguesData?.leagues.map((league: any) => (
-                <MenuItem key={league.id} value={league.id}>
-                  {league.name} ({league.country})
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Sport</InputLabel>
+                <Select
+                  value={selectedSport}
+                  label="Sport"
+                  onChange={(e) => setSelectedSport(e.target.value)}
+                >
+                  {sportsData?.sports.map((sport: any) => (
+                    <MenuItem key={sport.name} value={sport.name}>
+                      {sport.displayName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Select League</InputLabel>
+                <Select
+                  value={selectedLeague}
+                  label="Select League"
+                  onChange={(e) => setSelectedLeague(e.target.value)}
+                >
+                  {leaguesData?.leagues.map((league: any) => (
+                    <MenuItem key={league.id} value={league.id}>
+                      {league.name} ({league.country})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
 

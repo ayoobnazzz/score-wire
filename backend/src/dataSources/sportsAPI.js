@@ -4,15 +4,50 @@ import fetch from 'node-fetch';
 const THESPORTSDB_BASE_URL = 'https://www.thesportsdb.com/api/v1/json/123';
 const API_KEY = '123'; // Free API key
 
-// Popular league IDs from TheSportsDB
-const LEAGUE_IDS = {
-  'Premier League': '4328',
-  'La Liga': '4335',
-  'Serie A': '4332',
-  'Bundesliga': '4331',
-  'Ligue 1': '4334',
-  'Champions League': '4480',
+// Popular league IDs from TheSportsDB organized by sport
+const LEAGUE_IDS_BY_SPORT = {
+  Soccer: {
+    'Premier League': '4328',
+    'La Liga': '4335',
+    'Serie A': '4332',
+    'Bundesliga': '4331',
+    'Ligue 1': '4334',
+    'Champions League': '4480',
+    'MLS': '4346',
+    'Eredivisie': '4337',
+  },
+  Basketball: {
+    'NBA': '4387',
+    'WNBA': '4388',
+    'Euroleague': '4390',
+  },
+  Baseball: {
+    'MLB': '4424',
+    'NPB': '4425',
+  },
+  Ice_Hockey: {
+    'NHL': '4380',
+    'KHL': '4381',
+  },
+  American_Football: {
+    'NFL': '4391',
+    'CFL': '4392',
+  },
+  Motorsport: {
+    'Formula 1': '4370',
+    'MotoGP': '4371',
+  },
 };
+
+// Supported sports
+const SPORTS = [
+  { name: 'Soccer', displayName: 'Soccer' },
+  { name: 'Basketball', displayName: 'Basketball' },
+  { name: 'Baseball', displayName: 'Baseball' },
+  { name: 'Ice_Hockey', displayName: 'Ice Hockey' },
+  { name: 'American_Football', displayName: 'American Football' },
+  { name: 'Motorsport', displayName: 'Motorsport' },
+];
 
 // Mock data generator for development (since free APIs have limitations)
 const generateMockMatches = () => {
@@ -150,13 +185,14 @@ const transformEventToMatch = (event) => {
   };
 };
 
-export const fetchMatches = async ({ league, team, status }) => {
+export const fetchMatches = async ({ league, team, status, sport = 'Soccer' }) => {
   try {
     let allMatches = [];
+    const sportLeagues = LEAGUE_IDS_BY_SPORT[sport] || LEAGUE_IDS_BY_SPORT['Soccer'];
 
     // If league is specified, fetch matches for that league
-    if (league && LEAGUE_IDS[league]) {
-      const leagueId = LEAGUE_IDS[league];
+    if (league && sportLeagues[league]) {
+      const leagueId = sportLeagues[league];
       
       // Fetch upcoming matches
       try {
@@ -184,8 +220,8 @@ export const fetchMatches = async ({ league, team, status }) => {
         console.error('Error fetching past events:', err);
       }
     } else {
-      // Fetch matches for all popular leagues
-      for (const [leagueName, leagueId] of Object.entries(LEAGUE_IDS)) {
+      // Fetch matches for all popular leagues in the selected sport
+      for (const [leagueName, leagueId] of Object.entries(sportLeagues)) {
         try {
           const nextResponse = await fetch(
             `${THESPORTSDB_BASE_URL}/eventsnextleague.php?id=${leagueId}`
@@ -250,7 +286,7 @@ export const fetchMatchDetails = async (matchId) => {
   }
 };
 
-export const fetchPlayers = async ({ team, league }) => {
+export const fetchPlayers = async ({ team, league, sport = 'Soccer' }) => {
   try {
     let players = [];
 
@@ -307,12 +343,13 @@ export const fetchPlayers = async ({ team, league }) => {
   }
 };
 
-export const fetchLeagues = async () => {
+export const fetchLeagues = async (sport = 'Soccer') => {
   try {
     const leagues = [];
+    const sportLeagues = LEAGUE_IDS_BY_SPORT[sport] || LEAGUE_IDS_BY_SPORT['Soccer'];
     
-    // First, try to fetch popular leagues by their IDs
-    for (const [name, id] of Object.entries(LEAGUE_IDS)) {
+    // First, try to fetch popular leagues by their IDs for the selected sport
+    for (const [name, id] of Object.entries(sportLeagues)) {
       try {
         const response = await fetch(
           `${THESPORTSDB_BASE_URL}/lookupleague.php?id=${id}`
@@ -327,6 +364,7 @@ export const fetchLeagues = async () => {
             country: league.strCountry || 'Unknown',
             logo: league.strLogo || null,
             season: league.strCurrentSeason || league.strSeason || '2024/25',
+            sport: sport,
           });
         }
       } catch (err) {
@@ -335,7 +373,7 @@ export const fetchLeagues = async () => {
     }
 
     // Also try to search for popular leagues by name to get more results
-    const popularLeagueNames = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1', 'Champions League', 'MLS', 'Eredivisie'];
+    const popularLeagueNames = Object.keys(sportLeagues);
     
     for (const leagueName of popularLeagueNames) {
       try {
@@ -356,6 +394,7 @@ export const fetchLeagues = async () => {
                     country: league.strCountry || country.strCountry || 'Unknown',
                     logo: league.strLogo || null,
                     season: league.strCurrentSeason || league.strSeason || '2024/25',
+                    sport: sport,
                   });
                 }
               });
@@ -376,12 +415,13 @@ export const fetchLeagues = async () => {
 
     // Fallback to hardcoded popular leagues
     console.log('Using fallback league data');
-    return Object.entries(LEAGUE_IDS).map(([name, id]) => ({
+    return Object.entries(sportLeagues).map(([name, id]) => ({
       id: id,
       name: name,
       country: getCountryFromLeague(name),
       logo: null,
       season: '2024/25',
+      sport: sport,
     }));
   } catch (error) {
     console.error('Error fetching leagues:', error);
@@ -398,8 +438,26 @@ const getCountryFromLeague = (leagueName) => {
     'Bundesliga': 'Germany',
     'Ligue 1': 'France',
     'Champions League': 'Europe',
+    'MLS': 'USA',
+    'Eredivisie': 'Netherlands',
+    'NBA': 'USA',
+    'WNBA': 'USA',
+    'Euroleague': 'Europe',
+    'MLB': 'USA',
+    'NPB': 'Japan',
+    'NHL': 'USA',
+    'KHL': 'Russia',
+    'NFL': 'USA',
+    'CFL': 'Canada',
+    'Formula 1': 'International',
+    'MotoGP': 'International',
   };
   return countryMap[leagueName] || 'Unknown';
+};
+
+// Export sports list
+export const fetchSports = async () => {
+  return SPORTS;
 };
 
 export const fetchStandings = async (leagueId) => {

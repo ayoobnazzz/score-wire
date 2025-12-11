@@ -25,8 +25,8 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import PeopleIcon from '@mui/icons-material/People'
 
 const GET_PLAYERS = gql`
-  query GetPlayers($team: String, $league: String) {
-    players(team: $team, league: $league) {
+  query GetPlayers($team: String, $league: String, $sport: String) {
+    players(team: $team, league: $league, sport: $sport) {
       id
       name
       team
@@ -38,15 +38,28 @@ const GET_PLAYERS = gql`
   }
 `
 
+const GET_SPORTS = gql`
+  query GetSports {
+    sports {
+      name
+      displayName
+    }
+  }
+`
+
 export default function PlayerStats() {
+  const [selectedSport, setSelectedSport] = useState<string>('Soccer')
   const [teamFilter, setTeamFilter] = useState<string>('')
   const [sortBy, setSortBy] = useState<string>('goals')
 
   const { data, loading, error } = useQuery(GET_PLAYERS, {
     variables: {
       team: teamFilter || undefined,
+      sport: selectedSport,
     },
   })
+
+  const { data: sportsData } = useQuery(GET_SPORTS)
 
   const players = data?.players || []
 
@@ -129,7 +142,26 @@ export default function PlayerStats() {
             FILTERS
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Sport</InputLabel>
+                <Select
+                  value={selectedSport}
+                  label="Sport"
+                  onChange={(e) => {
+                    setSelectedSport(e.target.value)
+                    setTeamFilter('') // Reset team filter when sport changes
+                  }}
+                >
+                  {sportsData?.sports.map((sport: any) => (
+                    <MenuItem key={sport.name} value={sport.name}>
+                      {sport.displayName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
               <TextField
                 fullWidth
                 size="small"
@@ -139,7 +171,7 @@ export default function PlayerStats() {
                 onChange={(e) => setTeamFilter(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={4}>
               <FormControl fullWidth size="small">
                 <InputLabel>Sort By</InputLabel>
                 <Select

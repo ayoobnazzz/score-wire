@@ -37,6 +37,7 @@ export const typeDefs = `#graphql
     country: String!
     logo: String
     season: String!
+    sport: String!
   }
 
   type Standing {
@@ -54,14 +55,20 @@ export const typeDefs = `#graphql
     logo: String
   }
 
+  type Sport {
+    name: String!
+    displayName: String!
+  }
+
   type Query {
-    matches(league: String, team: String, status: String): [Match!]!
+    matches(league: String, team: String, status: String, sport: String): [Match!]!
     match(id: ID!): Match
-    players(team: String, league: String): [Player!]!
+    players(team: String, league: String, sport: String): [Player!]!
     player(id: ID!): Player
-    leagues: [League!]!
+    leagues(sport: String): [League!]!
     league(id: ID!): League
     standings(leagueId: ID!): [Standing!]!
+    sports: [Sport!]!
   }
 
   type Subscription {
