@@ -3,13 +3,32 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createClient } from 'graphql-ws';
 
+// Get GraphQL URL from environment variable (for production) or use localhost (for development)
+const GRAPHQL_HTTP_URL = import.meta.env.VITE_GRAPHQL_URL || 'http://localhost:4000';
+
+// Convert HTTP URL to WebSocket URL
+// https://example.com -> wss://example.com
+// http://example.com -> ws://example.com
+const GRAPHQL_WS_URL = import.meta.env.VITE_GRAPHQL_URL
+  ? import.meta.env.VITE_GRAPHQL_URL.replace('https://', 'wss://').replace('http://', 'ws://')
+  : 'ws://localhost:4000';
+
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: `${GRAPHQL_HTTP_URL}/graphql`,
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:4000/graphql',
+    url: `${GRAPHQL_WS_URL}/graphql`,
+    // Add reconnection options for production stability
+    connectionParams: () => ({}),
+    shouldRetry: () => true,
+    retryAttempts: 5,
+    retryWait: async function* retryWait() {
+      for (let i = 0; i < 5; i++) {
+        yield new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+      }
+    },
   })
 );
 
